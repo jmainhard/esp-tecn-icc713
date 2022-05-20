@@ -1,3 +1,6 @@
+// 2022-05-20 solución prueba téncica especialización tecnológica
+// jorge mainhard
+
 // Responsables de los cuarteles
 const paddockManagers = [
   { id: 1, taxNumber: "34634251", name: "MATIAS" },
@@ -198,41 +201,67 @@ function listPaddockManagerIds() {
 }
 
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
+// fuente: https://stackoverflow.com/questions/51165
 function listPaddockManagersByName() {
-  
+  // forzamos 'a' a ser un string para evitar excepciones
+  return paddockManagers.sort((a, b) => ('' + a.name).localeCompare(b.name)).map(manager => manager.taxNumber);
 }
 
-// 2 Arreglo con los nombres de cada tipo de cultivo, ordenados decrecientemente por la suma TOTAL de la cantidad de hectáreas plantadas de cada uno de ellos.
+/* 
+  2 Arreglo con los nombres de cada tipo de cultivo, ordenados 
+  decrecientemente por la suma TOTAL de la cantidad de hectáreas 
+  plantadas de cada uno de ellos.
+ */
 function sortPaddockTypeByTotalArea() {
-  
+  let paddockTypeAreaMap = new Map();
+  paddocks.forEach(paddock => {
+    let paddockObj = paddockType.find(item => item.id === paddock.paddockTypeId);
+    let thisPaddock = {name: paddockObj.name, totalArea: 0};
+    if (!paddockTypeAreaMap.has(thisPaddock.name))
+      paddockTypeAreaMap.set(thisPaddock.name, 0);
+    let actualArea = paddockTypeAreaMap.get(thisPaddock.name) + paddock.area;
+    paddockTypeAreaMap.set(thisPaddock.name, actualArea);
+  });
+  // ordenar (por values), transformar a Array y mapear a sólo nombres
+  return Array.from(new Map([...paddockTypeAreaMap.entries()].sort((a, b) => b[1] - a[1]))).map(typeArea => typeArea[0]);
+}
 
-// 3 Arreglo con los nombres de los administradores, ordenados decrecientemente por la suma TOTAL de hectáreas que administran.
+/* 
+  3 Arreglo con los nombres de los administradores, ordenados 
+  decrecientemente por la suma TOTAL de hectáreas que administran.
+*/
 function sortFarmManagerByAdminArea() {
   
 }
 
-// 4 Objeto en que las claves sean los nombres de los campos y los valores un arreglo con los ruts de sus administradores ordenados alfabéticamente por nombre.
+/*
+  4 Objeto en que las claves sean los nombres de los campos y los 
+  valores un arreglo con los ruts de sus administradores ordenados 
+  alfabéticamente por nombre.
+*/
 function farmManagerNames() {
- 
+
 }
 
 // 5 Arreglo ordenado decrecientemente con los m2 totales de cada campo que tengan más de 2 hectáreas en Paltos
 function biggestAvocadoFarms() {
-  
+
 }
 
 // 6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
 function biggestCherriesManagers() {
-  
+
+}
+
 
 // 7 Objeto en el cual las claves sean el nombre del administrador y el valor un arreglo con los nombres de los campos que administra, ordenados alfabéticamente
 function farmManagerPaddocks() {
-  
+
 }
 
 // 8 Objeto en que las claves sean el tipo de cultivo concatenado con su año de plantación (la concatenación tiene un separador de guión ‘-’, por ejemplo AVELLANOS-2020) y el valor otro objeto en el cual la clave sea el id del administrador y el valor el nombre del administrador
 function paddocksManagers() {
-  
+
 }
 
 // 9 Agregar nuevo administrador con datos ficticios a "paddockManagers" y agregar un nuevo cuartel de tipo NOGALES con 900mts2, año 2017 de AGRICOLA SANTA ANA, administrado por este nuevo administrador
