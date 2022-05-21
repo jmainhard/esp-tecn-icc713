@@ -207,8 +207,37 @@ function listPaddockManagersByName() {
   return paddockManagers.sort((a, b) => ('' + a.name).localeCompare(b.name)).map(manager => manager.taxNumber);
 }
 
-function findById(array, id) {
-  return array.find(item => item.id === id);
+function findById(data, id) {
+  return data.find(item => item.id === id);
+}
+
+/**
+ * 
+ * @param {Array} data - Tiene los datos en mayor detalle de la id que se quiere asociar a un total
+ * @param {number} type - Tipo de id que se buscará
+ *  - 0 (default) sumará total por tipo de paddock
+ *  - 1 sumará total por manager
+ * @returns Arreglo con los nombres del tipo en orden decreciente
+ */
+// FIXME: calcular valor de paddock undefined en caso de ser necesario
+function addArea(data, type = 0) {
+  let areaMap = new Map();
+  paddocks.forEach(paddock => {
+    // obtiene name desde 'padockType'
+    let obj = findById(data, type === 0 ? paddock.paddockTypeId : paddock.paddockManagerId);
+    if (obj != undefined) {
+      let thisPaddock = {name: obj.name, totalArea: 0};
+
+      // agrega al map si no se encuentra y añade área de 'paddock'
+      if (!areaMap.has(thisPaddock.name))
+        areaMap.set(thisPaddock.name, 0);
+
+      let actualArea = areaMap.get(thisPaddock.name) + paddock.area;
+      areaMap.set(thisPaddock.name, actualArea);
+    } // ignora caso undefined
+  });
+  // ordenar (por values), transformar a Array y mapear a sólo nombres
+  return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1]))).map(area => area[1]);
 }
 
 /* 
@@ -216,25 +245,8 @@ function findById(array, id) {
   decrecientemente por la suma TOTAL de la cantidad de hectáreas 
   plantadas de cada uno de ellos.
  */
-// FIXME: calcular valor de paddock undefined en caso de ser necesario
 function sortPaddockTypeByTotalArea() {
-  let typeAreaMap = new Map();
-  paddocks.forEach(paddock => {
-    // obtiene name desde 'padockType'
-    let paddockObj = findById(paddockType, paddock.paddockTypeId);
-    if (paddockObj != undefined) {
-      let thisPaddock = {name: paddockObj.name, totalArea: 0};
-
-      // agrega al map si no se encuentra y añade área de 'paddock'
-      if (!typeAreaMap.has(thisPaddock.name))
-        typeAreaMap.set(thisPaddock.name, 0);
-
-      let actualArea = typeAreaMap.get(thisPaddock.name) + paddock.area;
-      typeAreaMap.set(thisPaddock.name, actualArea);
-    } // ignora caso undefined
-  });
-  // ordenar (por values), transformar a Array y mapear a sólo nombres
-  return Array.from(new Map([...typeAreaMap.entries()].sort((a, b) => b[1] - a[1]))).map(typeArea => typeArea[0]);
+  return addArea(paddockType);
 }
 
 /* 
@@ -242,23 +254,7 @@ function sortPaddockTypeByTotalArea() {
   decrecientemente por la suma TOTAL de hectáreas que administran.
 */
 function sortFarmManagerByAdminArea() {
-  let typeAreaMap = new Map();
-  paddocks.forEach(paddock => {
-    // obtiene name desde 'padockType'
-    let manager = findById(paddockManagers, paddock.paddockManagerId);
-    if (manager != undefined) {
-      let thisPaddock = {name: manager.name, totalArea: 0};
-
-      // agrega al map si no se encuentra y añade área de 'paddock'
-      if (!typeAreaMap.has(thisPaddock.name))
-        typeAreaMap.set(thisPaddock.name, 0);
-
-      let actualArea = typeAreaMap.get(thisPaddock.name) + paddock.area;
-      typeAreaMap.set(thisPaddock.name, actualArea);
-    } // ignora caso undefined
-  });
-  // ordenar (por values), transformar a Array y mapear a sólo nombres
-  return Array.from(new Map([...typeAreaMap.entries()].sort((a, b) => b[1] - a[1]))).map(typeArea => typeArea[0]);
+  return addArea(paddockManagers, 1);
 }
 
 /*
@@ -270,12 +266,18 @@ function farmManagerNames() {
 
 }
 
-// 5 Arreglo ordenado decrecientemente con los m2 totales de cada campo que tengan más de 2 hectáreas en Paltos
+/*
+  5 Arreglo ordenado decrecientemente con los m2 totales de cada 
+  campo que tengan más de 2 hectáreas en Paltos
+*/
 function biggestAvocadoFarms() {
 
 }
 
-// 6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
+/* 
+  6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA 
+  LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
+*/
 function biggestCherriesManagers() {
   console.log(testFunction());
 }
@@ -314,13 +316,13 @@ console.log("Pregunta 3");
 console.log(sortFarmManagerByAdminArea());
 console.log("Pregunta 4");
 console.log(farmManagerNames());
-console.log("Pregunta 5");
-console.log(biggestAvocadoFarms());
-console.log("Pregunta 6");
-console.log(biggestCherriesManagers());
-console.log("Pregunta 7");
-console.log(farmManagerPaddocks());
-console.log("Pregunta 8");
-console.log(paddocksManagers());
-console.log("Pregunta 9");
-console.log(newManagerRanking());
+// console.log("Pregunta 5");
+// console.log(biggestAvocadoFarms());
+// console.log("Pregunta 6");
+// console.log(biggestCherriesManagers());
+// console.log("Pregunta 7");
+// console.log(farmManagerPaddocks());
+// console.log("Pregunta 8");
+// console.log(paddocksManagers());
+// console.log("Pregunta 9");
+// console.log(newManagerRanking());
