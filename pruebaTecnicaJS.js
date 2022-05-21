@@ -227,8 +227,8 @@ function sortPaddockTypeByTotalArea() {
 
       // agrega al map si no se encuentra y añade área de 'paddock'
       if (!paddockTypeAreaMap.has(thisPaddock.name))
-      paddockTypeAreaMap.set(thisPaddock.name, 0);
-      
+        paddockTypeAreaMap.set(thisPaddock.name, 0);
+
       let actualArea = paddockTypeAreaMap.get(thisPaddock.name) + paddock.area;
       paddockTypeAreaMap.set(thisPaddock.name, actualArea);
     } // ignora caso undefined
