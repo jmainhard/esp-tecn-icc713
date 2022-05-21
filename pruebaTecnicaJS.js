@@ -218,7 +218,7 @@ function findById(array, id) {
  */
 // FIXME: calcular valor de paddock undefined en caso de ser necesario
 function sortPaddockTypeByTotalArea() {
-  let paddockTypeAreaMap = new Map();
+  let typeAreaMap = new Map();
   paddocks.forEach(paddock => {
     // obtiene name desde 'padockType'
     let paddockObj = findById(paddockType, paddock.paddockTypeId);
@@ -226,15 +226,15 @@ function sortPaddockTypeByTotalArea() {
       let thisPaddock = {name: paddockObj.name, totalArea: 0};
 
       // agrega al map si no se encuentra y añade área de 'paddock'
-      if (!paddockTypeAreaMap.has(thisPaddock.name))
-        paddockTypeAreaMap.set(thisPaddock.name, 0);
+      if (!typeAreaMap.has(thisPaddock.name))
+        typeAreaMap.set(thisPaddock.name, 0);
 
-      let actualArea = paddockTypeAreaMap.get(thisPaddock.name) + paddock.area;
-      paddockTypeAreaMap.set(thisPaddock.name, actualArea);
+      let actualArea = typeAreaMap.get(thisPaddock.name) + paddock.area;
+      typeAreaMap.set(thisPaddock.name, actualArea);
     } // ignora caso undefined
   });
   // ordenar (por values), transformar a Array y mapear a sólo nombres
-  return Array.from(new Map([...paddockTypeAreaMap.entries()].sort((a, b) => b[1] - a[1]))).map(typeArea => typeArea[0]);
+  return Array.from(new Map([...typeAreaMap.entries()].sort((a, b) => b[1] - a[1]))).map(typeArea => typeArea[0]);
 }
 
 /* 
@@ -242,7 +242,23 @@ function sortPaddockTypeByTotalArea() {
   decrecientemente por la suma TOTAL de hectáreas que administran.
 */
 function sortFarmManagerByAdminArea() {
+  let typeAreaMap = new Map();
+  paddocks.forEach(paddock => {
+    // obtiene name desde 'padockType'
+    let manager = findById(paddockManagers, paddock.paddockManagerId);
+    if (manager != undefined) {
+      let thisPaddock = {name: manager.name, totalArea: 0};
 
+      // agrega al map si no se encuentra y añade área de 'paddock'
+      if (!typeAreaMap.has(thisPaddock.name))
+        typeAreaMap.set(thisPaddock.name, 0);
+
+      let actualArea = typeAreaMap.get(thisPaddock.name) + paddock.area;
+      typeAreaMap.set(thisPaddock.name, actualArea);
+    } // ignora caso undefined
+  });
+  // ordenar (por values), transformar a Array y mapear a sólo nombres
+  return Array.from(new Map([...typeAreaMap.entries()].sort((a, b) => b[1] - a[1]))).map(typeArea => typeArea[0]);
 }
 
 /*
