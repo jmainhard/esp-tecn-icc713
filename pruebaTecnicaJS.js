@@ -215,8 +215,11 @@ function listPaddockManagersByName() {
 function sortPaddockTypeByTotalArea() {
   let paddockTypeAreaMap = new Map();
   paddocks.forEach(paddock => {
+    // obtiene name desde 'padockType'
     let paddockObj = paddockType.find(item => item.id === paddock.paddockTypeId);
     let thisPaddock = {name: paddockObj.name, totalArea: 0};
+
+    // agrega al map si no se encuentra y añade área de 'paddock'
     if (!paddockTypeAreaMap.has(thisPaddock.name))
       paddockTypeAreaMap.set(thisPaddock.name, 0);
     let actualArea = paddockTypeAreaMap.get(thisPaddock.name) + paddock.area;
@@ -231,7 +234,7 @@ function sortPaddockTypeByTotalArea() {
   decrecientemente por la suma TOTAL de hectáreas que administran.
 */
 function sortFarmManagerByAdminArea() {
-  
+
 }
 
 /*
@@ -250,7 +253,11 @@ function biggestAvocadoFarms() {
 
 // 6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
 function biggestCherriesManagers() {
+  console.log(testFunction());
+}
 
+function testFunction() {
+  return 'hello world'
 }
 
 
