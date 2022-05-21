@@ -207,6 +207,10 @@ function listPaddockManagersByName() {
   return paddockManagers.sort((a, b) => ('' + a.name).localeCompare(b.name)).map(manager => manager.taxNumber);
 }
 
+function findById(array, id) {
+  return array.find(item => item.id === id);
+}
+
 /* 
   2 Arreglo con los nombres de cada tipo de cultivo, ordenados 
   decrecientemente por la suma TOTAL de la cantidad de hectáreas 
@@ -216,7 +220,7 @@ function sortPaddockTypeByTotalArea() {
   let paddockTypeAreaMap = new Map();
   paddocks.forEach(paddock => {
     // obtiene name desde 'padockType'
-    let paddockObj = paddockType.find(item => item.id === paddock.paddockTypeId);
+    let paddockObj = findById(paddockType, paddock.paddockTypeId);
     let thisPaddock = {name: paddockObj.name, totalArea: 0};
 
     // agrega al map si no se encuentra y añade área de 'paddock'
