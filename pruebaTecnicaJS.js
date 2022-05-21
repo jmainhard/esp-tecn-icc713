@@ -216,18 +216,22 @@ function findById(array, id) {
   decrecientemente por la suma TOTAL de la cantidad de hectáreas 
   plantadas de cada uno de ellos.
  */
+// FIXME: calcular valor de paddock undefined en caso de ser necesario
 function sortPaddockTypeByTotalArea() {
   let paddockTypeAreaMap = new Map();
   paddocks.forEach(paddock => {
     // obtiene name desde 'padockType'
     let paddockObj = findById(paddockType, paddock.paddockTypeId);
-    let thisPaddock = {name: paddockObj.name, totalArea: 0};
+    if (paddockObj != undefined) {
+      let thisPaddock = {name: paddockObj.name, totalArea: 0};
 
-    // agrega al map si no se encuentra y añade área de 'paddock'
-    if (!paddockTypeAreaMap.has(thisPaddock.name))
+      // agrega al map si no se encuentra y añade área de 'paddock'
+      if (!paddockTypeAreaMap.has(thisPaddock.name))
       paddockTypeAreaMap.set(thisPaddock.name, 0);
-    let actualArea = paddockTypeAreaMap.get(thisPaddock.name) + paddock.area;
-    paddockTypeAreaMap.set(thisPaddock.name, actualArea);
+      
+      let actualArea = paddockTypeAreaMap.get(thisPaddock.name) + paddock.area;
+      paddockTypeAreaMap.set(thisPaddock.name, actualArea);
+    } // ignora caso undefined
   });
   // ordenar (por values), transformar a Array y mapear a sólo nombres
   return Array.from(new Map([...paddockTypeAreaMap.entries()].sort((a, b) => b[1] - a[1]))).map(typeArea => typeArea[0]);
