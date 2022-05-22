@@ -195,7 +195,7 @@ const farms = [
 */
 // Tip: Una hectárea equivale a 10.000m2
 
-// #region FUNCIONES PROPIAS
+// #region funciones propias
 // fuente: https://stackoverflow.com/questions/51165
 function sortManagersByName(managers) {
   // forzamos 'a' a ser un string para evitar excepciones
