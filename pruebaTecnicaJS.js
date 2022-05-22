@@ -202,9 +202,13 @@ function listPaddockManagerIds() {
 
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
 // fuente: https://stackoverflow.com/questions/51165
-function listPaddockManagersByName() {
+function sortManagersByName(managers) {
   // forzamos 'a' a ser un string para evitar excepciones
-  return paddockManagers.sort((a, b) => ('' + a.name).localeCompare(b.name)).map(manager => manager.taxNumber);
+  return managers.sort((a, b) => ('' + a.name).localeCompare(b.name));
+}
+
+function listPaddockManagersByName() {
+  return sortManagersByName(paddockManagers).map(manager => manager.taxNumber);
 }
 
 function findById(data, id) {
@@ -217,7 +221,8 @@ function findByValue(data, val) {
 
 /**
  * 
- * @param {Array} data - Tiene los datos en mayor detalle de la id que se quiere asociar a un total
+ * @param {Array} data - Tiene los datos en mayor detalle de la id que se quiere
+ *  asociar a un total
  * @param {number} type - Tipo de id que se buscará
  *  - 0 (default) sumará total por tipo de paddock
  *  - 1 sumará total por manager
@@ -266,25 +271,10 @@ function sortFarmManagerByAdminArea() {
 valores un arreglo con los ruts de sus administradores ordenados 
 alfabéticamente por nombre.
 */
-
-function replaceManagerIds(array) {
-  array.forEach(element => {
-    let manager = findById(paddockManagers, )
-    // if () {
-      
-    // }
-  });
-}
-
-function getManager(id) {
-  return findById(paddockManagers, id);
-}
-
 function groupManagersByFarm(farmId, farmManagers) {
   paddocks.forEach(paddock => {
     let farmManagerId = paddock.paddockManagerId;
     let farmManager = findByValue(farmManagers, farmManagerId);
-    let farmManagerObj = findById(paddockManagers, farmManager);
     if (farmManager === undefined) {
       if (farmId === paddock.farmId) {
         farmManagers.push(farmManagerId);
@@ -303,10 +293,17 @@ function farmManagerNames() {
     }
     groupManagersByFarm(farm.id, farmManagers);
   });
-
-  for (let farmManagerIds of farmManagerMap.values()) {
-    let names = farmManagerIds.map(farmManagerId => findById(paddockManagers, farmManagerId).name);
-  }
+  // FIXME: no considera caso undefined
+  farmManagerMap.forEach((value, key) => {
+    let managers = []; 
+    let sortedManagers = [];
+    let names = [];
+    value.forEach(farmManagerId => managers.push(findById(paddockManagers, farmManagerId)));
+    sortedManagers = sortManagersByName(managers);
+    names = sortedManagers.map(manager => manager.name);
+    farmManagerMap.set(key, names);
+  });
+  return farmManagerMap;
 }
 
 
