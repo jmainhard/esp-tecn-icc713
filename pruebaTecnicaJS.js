@@ -195,7 +195,10 @@ const farms = [
 */
 // Tip: Una hectárea equivale a 10.000m2
 
+//////////////
 // #region funciones propias
+//////////////
+
 // fuente: https://stackoverflow.com/questions/51165
 function sortManagersByName(managers) {
   // forzamos 'a' a ser un string para evitar excepciones
@@ -219,7 +222,7 @@ function getIdByType(type, paddock) {
     case 2:
       return paddock.farmId;
     default:
-      console.log('Error: Tipo de suma no existe');
+      console.log('Error: Tipo de id no existe');
       break;
   }
 }
@@ -231,6 +234,7 @@ function getIdByType(type, paddock) {
  * @param {number} type - Tipo de id que se buscará
  *  - 0 (default) sumará total por tipo de paddock
  *  - 1 sumará total por manager
+ *  - 2 sumará total por farm
  * @returns Arreglo con los nombres del tipo en orden decreciente
  */
 // FIXME: calcular valor de paddock undefined en caso de ser necesario
@@ -272,12 +276,28 @@ function sortAndReplaceIds(farmManagerMap) {
     let managers = [];
     let names = [];
     managers = value.map(farmManagerId => findById(paddockManagers, farmManagerId));
-    names = sortManagersByName(managers).map(manager => manager.name);
+    names = sortManagersByName(managers).map(manager => manager.taxNumber);
     farmManagerMap.set(key, names);
   });
 }
 
+function filterCherriesByFarm(farmId) {
+  return paddocks
+    .filter(item => item.paddockTypeId === 3 && item.farmId === farmId);
+}
+
+function filterByArea(array, area) {
+  return array.filter(item => item.area > area);
+}
+
+function getManagersNames(paddocks) {
+  return paddocks
+    .map(paddock => findById(paddockManagers, paddock.paddockManagerId).name);
+}
+
+//////////////
 // #endregion
+//////////////
 
 // 0 Arreglo con los ids de los responsables de cada cuartel
 function listPaddockManagerIds() {
@@ -342,7 +362,10 @@ function biggestAvocadoFarms() {
   ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
 */
 function biggestCherriesManagers() {
-
+  const forestalAgricolaLoEncina = 3;
+  let cherryPaddocks = filterCherriesByFarm(forestalAgricolaLoEncina);
+  const finalPaddocks = filterByArea(cherryPaddocks, 1000);
+  return sortManagersByName(getManagersNames(finalPaddocks));
 }
 
 /*
