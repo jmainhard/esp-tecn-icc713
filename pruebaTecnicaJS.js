@@ -261,38 +261,58 @@ function sortFarmManagerByAdminArea() {
   return addArea(paddockManagers, 1);
 }
 
+/*
+4 Objeto en que las claves sean los nombres de los campos y los 
+valores un arreglo con los ruts de sus administradores ordenados 
+alfabéticamente por nombre.
+*/
+
+function replaceManagerIds(array) {
+  array.forEach(element => {
+    let manager = findById(paddockManagers, )
+    // if () {
+      
+    // }
+  });
+}
+
+function getManager(id) {
+  return findById(paddockManagers, id);
+}
+
 function groupManagersByFarm(farmId, farmManagers) {
   paddocks.forEach(paddock => {
     let farmManagerId = paddock.paddockManagerId;
     let farmManager = findByValue(farmManagers, farmManagerId);
+    let farmManagerObj = findById(paddockManagers, farmManager);
     if (farmManager === undefined) {
       if (farmId === paddock.farmId) {
-        farmManagers.push(farmManagerId)
+        farmManagers.push(farmManagerId);
       }
     }
   });
+  
 }
 
-/*
-  4 Objeto en que las claves sean los nombres de los campos y los 
-  valores un arreglo con los ruts de sus administradores ordenados 
-  alfabéticamente por nombre.
-*/
 function farmManagerNames() {
-  let map = new Map();
+  let farmManagerMap = new Map();
   farms.forEach(farm => {
     let farmManagers = [];
-    if (!map.has(farm.name)) {
-      map.set(farm.name, farmManagers);
+    if (!farmManagerMap.has(farm.name)) {
+      farmManagerMap.set(farm.name, farmManagers);
     }
     groupManagersByFarm(farm.id, farmManagers);
   });
-  return map;
+
+  for (let farmManagerIds of farmManagerMap.values()) {
+    let names = farmManagerIds.map(farmManagerId => findById(paddockManagers, farmManagerId).name);
+  }
 }
 
+
 /*
-  5 Arreglo ordenado decrecientemente con los m2 totales de cada 
-  campo que tengan más de 2 hectáreas en Paltos
+5 Arreglo ordenado decrecientemente con los m2 totales de cada 
+campo que tengan más de 2 hectáreas en Paltos
 */
 function biggestAvocadoFarms() {
 
