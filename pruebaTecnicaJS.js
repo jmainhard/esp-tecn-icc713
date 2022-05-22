@@ -258,6 +258,12 @@ function addArea(data, type = 0, filteredPaddocks = paddocks) {
   return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1])));
 }
 
+function groupBy(id, array) {
+  paddocks.forEach(element => {
+    // let grouping = element.
+  });
+}
+
 function groupManagersByFarm(farmId, farmManagers) {
   paddocks.forEach(paddock => {
     let farmManagerId = paddock.paddockManagerId;
@@ -265,6 +271,18 @@ function groupManagersByFarm(farmId, farmManagers) {
     if (farmManager === undefined) {
       if (farmId === paddock.farmId) {
         farmManagers.push(farmManagerId);
+      }
+    }
+  });
+}
+
+function groupFarmsByManager(managerId, managerFarms) {
+  paddocks.forEach(paddock => {
+    let farmId = paddock.farmId;
+    let farmManager = findByValue(managerFarms, farmId);
+    if (farmManager === undefined) {
+      if (managerId === paddock.paddockManagerId) {
+        managerFarms.push(farmId);
       }
     }
   });
@@ -373,7 +391,16 @@ function biggestCherriesManagers() {
   arreglo con los nombres de los campos que administra, ordenados alfabéticamente
 */
 function farmManagerPaddocks() {
-
+  let managerFarmsMap = new Map();
+  paddockManagers.forEach(manager => {
+    let managerFarms = [];
+    if (!managerFarmsMap.has(manager.name)) {
+      managerFarmsMap.set(manager.name, managerFarms);
+    }
+    groupFarmsByManager(manager.id, managerFarms);
+  });
+  // sortAndReplaceIds(managerFarmsMap);
+  return managerFarmsMap;
 }
 
 /* 
@@ -417,8 +444,8 @@ console.log("Pregunta 5");
 console.log(biggestAvocadoFarms());
 console.log("Pregunta 6");
 console.log(biggestCherriesManagers());
-// console.log("Pregunta 7");
-// console.log(farmManagerPaddocks());
+console.log("Pregunta 7");
+console.log(farmManagerPaddocks());
 // console.log("Pregunta 8");
 // console.log(paddocksManagers());
 // console.log("Pregunta 9");
