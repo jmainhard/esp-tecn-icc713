@@ -258,34 +258,24 @@ function addArea(data, type = 0, filteredPaddocks = paddocks) {
   return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1])));
 }
 
-function groupBy(id, array) {
-  paddocks.forEach(element => {
-    // let grouping = element.
+function groupBy(id, array, groupingType, groupingBy) {
+  paddocks.forEach(paddock => {
+    let groupingId = getIdByType(groupingType, paddock);
+    let isAlreadyGrouped = findByValue(array, groupingId);
+    if (isAlreadyGrouped === undefined) {
+      if (id === getIdByType(groupingBy, paddock)) {
+        array.push(groupingId);
+      }
+    }
   });
 }
 
 function groupManagersByFarm(farmId, farmManagers) {
-  paddocks.forEach(paddock => {
-    let farmManagerId = paddock.paddockManagerId;
-    let farmManager = findByValue(farmManagers, farmManagerId);
-    if (farmManager === undefined) {
-      if (farmId === paddock.farmId) {
-        farmManagers.push(farmManagerId);
-      }
-    }
-  });
+  groupBy(farmId, farmManagers, 1, 2);
 }
 
 function groupFarmsByManager(managerId, managerFarms) {
-  paddocks.forEach(paddock => {
-    let farmId = paddock.farmId;
-    let farmManager = findByValue(managerFarms, farmId);
-    if (farmManager === undefined) {
-      if (managerId === paddock.paddockManagerId) {
-        managerFarms.push(farmId);
-      }
-    }
-  });
+  groupBy(managerId, managerFarms, 2, 1)
 }
 
 function sortAndReplaceIds(farmManagerMap) {
