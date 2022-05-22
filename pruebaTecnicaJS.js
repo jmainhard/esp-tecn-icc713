@@ -200,7 +200,7 @@ const farms = [
 //////////////
 
 // fuente: https://stackoverflow.com/questions/51165
-function sortManagersByName(managers) {
+function sortByNameAttribute(managers) {
   // forzamos 'a' a ser un string para evitar excepciones
   return managers.sort((a, b) => ('' + a.name).localeCompare(b.name));
 }
@@ -278,16 +278,41 @@ function groupFarmsByManager(managerId, managerFarms) {
   groupBy(managerId, managerFarms, 2, 1)
 }
 
-function sortAndReplaceIds(farmManagerMap) {
+function getAttribute(option, obj) {
+  switch (option) {
+    case 0:
+      return obj.taxNumber;
+    case 1:
+      return obj.name;  
+    default:
+      console.log("Error: tipo de atributo no existe");
+      break;
+  }
+}
+
+// Deprecated: método extraido en L:305
+// function sortAndReplaceIds(farmManagerMap) {
+//   // FIXME: no considera caso undefined
+//   farmManagerMap.forEach((value, key) => {
+//     let managers = [];
+//     let names = [];
+//     managers = value.map(farmManagerId => findById(paddockManagers, farmManagerId));
+//     names = sortByNameAttribute(managers).map(manager => manager.taxNumber);
+//     farmManagerMap.set(key, names);
+//   });
+// }
+
+function sortAndReplaceIds(map, from, replaceWith) {
   // FIXME: no considera caso undefined
-  farmManagerMap.forEach((value, key) => {
-    let managers = [];
+  map.forEach((value, key) => {
+    let objects = [];
     let names = [];
-    managers = value.map(farmManagerId => findById(paddockManagers, farmManagerId));
-    names = sortManagersByName(managers).map(manager => manager.taxNumber);
-    farmManagerMap.set(key, names);
+    objects = value.map(id => findById(from, id));
+    names = sortByNameAttribute(objects).map(item => getAttribute(replaceWith, item));
+    map.set(key, names);
   });
 }
+
 
 function filterCherriesByFarm(farmId) {
   return paddocks
@@ -314,7 +339,7 @@ function listPaddockManagerIds() {
 
 // 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
 function listPaddockManagersByName() {
-  return sortManagersByName(paddockManagers).map(manager => manager.taxNumber);
+  return sortByNameAttribute(paddockManagers).map(manager => manager.taxNumber);
 }
 
 /* 
@@ -350,7 +375,7 @@ function farmManagerNames() {
     }
     groupManagersByFarm(farm.id, farmManagers);
   });
-  sortAndReplaceIds(farmManagerMap);
+  sortAndReplaceIds(farmManagerMap, paddockManagers, 0);
   return farmManagerMap;
 }
 
@@ -373,7 +398,7 @@ function biggestCherriesManagers() {
   const forestalAgricolaLoEncina = 3;
   let cherryPaddocks = filterCherriesByFarm(forestalAgricolaLoEncina);
   const finalPaddocks = filterByArea(cherryPaddocks, 1000);
-  return sortManagersByName(getManagersNames(finalPaddocks));
+  return sortByNameAttribute(getManagersNames(finalPaddocks));
 }
 
 /*
@@ -389,7 +414,7 @@ function farmManagerPaddocks() {
     }
     groupFarmsByManager(manager.id, managerFarms);
   });
-  // sortAndReplaceIds(managerFarmsMap);
+  sortAndReplaceIds(managerFarmsMap, farms, 1);
   return managerFarmsMap;
 }
 
