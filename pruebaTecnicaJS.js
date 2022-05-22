@@ -271,9 +271,6 @@ function farmManagerNames() {
     paddocks.forEach(paddock => {
       let farmManagerId = paddock.paddockManagerId;
       let farmManagers = map.get(farm.name);
-      if (paddock.farmId === 1) {
-        console.log(paddock.paddockManagerId);
-      }
       if (farm.id === paddock.farmId) {
         let farmManager = findById(farmManagers, farmManagerId);
         if (farmManager === undefined) {
