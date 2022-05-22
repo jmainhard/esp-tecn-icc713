@@ -261,6 +261,18 @@ function sortFarmManagerByAdminArea() {
   return addArea(paddockManagers, 1);
 }
 
+function groupManagersByFarm(farmId, farmManagers) {
+  paddocks.forEach(paddock => {
+    let farmManagerId = paddock.paddockManagerId;
+    let farmManager = findByValue(farmManagers, farmManagerId);
+    if (farmManager === undefined) {
+      if (farmId === paddock.farmId) {
+        farmManagers.push(farmManagerId)
+      }
+    }
+  });
+}
+
 /*
   4 Objeto en que las claves sean los nombres de los campos y los 
   valores un arreglo con los ruts de sus administradores ordenados 
@@ -273,24 +285,8 @@ function farmManagerNames() {
     if (!map.has(farm.name)) {
       map.set(farm.name, farmManagers);
     }
-    paddocks.forEach(paddock => {
-      let farmManagerId = paddock.paddockManagerId;
-      let farmManager = findByValue(farmManagers, farmManagerId);
-      if (farmManager === undefined) {
-        if (farm.id === paddock.farmId) {
-          farmManagers.push(farmManagerId)
-        }
-      }
-    });
+    groupManagersByFarm(farm.id, farmManagers);
   });
-
-
-  paddocks.forEach(paddock => {
-    if (paddock.farmId === 2) {
-      console.log(paddock.paddockManagerId);
-    }
-  });
-  
   return map;
 }
 
