@@ -211,6 +211,10 @@ function findById(data, id) {
   return data.find(item => item.id === id);
 }
 
+function findByValue(data, val) {
+  return data.find(item => item === val);
+}
+
 /**
  * 
  * @param {Array} data - Tiene los datos en mayor detalle de la id que se quiere asociar a un total
@@ -264,21 +268,29 @@ function sortFarmManagerByAdminArea() {
 */
 function farmManagerNames() {
   let map = new Map();
-  farms.forEach(farm => { 
+  farms.forEach(farm => {
+    let farmManagers = [];
     if (!map.has(farm.name)) {
-      map.set(farm.name, []);
+      map.set(farm.name, farmManagers);
     }
     paddocks.forEach(paddock => {
       let farmManagerId = paddock.paddockManagerId;
-      let farmManagers = map.get(farm.name);
-      if (farm.id === paddock.farmId) {
-        let farmManager = findById(farmManagers, farmManagerId);
-        if (farmManager === undefined) {
+      let farmManager = findByValue(farmManagers, farmManagerId);
+      if (farmManager === undefined) {
+        if (farm.id === paddock.farmId) {
           farmManagers.push(farmManagerId)
         }
       }
     });
   });
+
+
+  paddocks.forEach(paddock => {
+    if (paddock.farmId === 2) {
+      console.log(paddock.paddockManagerId);
+    }
+  });
+  
   return map;
 }
 
