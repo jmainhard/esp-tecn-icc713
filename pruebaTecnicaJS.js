@@ -210,6 +210,20 @@ function findByValue(data, val) {
   return data.find(item => item === val);
 }
 
+function getIdByType(type, paddock) {
+  switch (type) {
+    case 0:
+      return paddock.paddockTypeId;
+    case 1:
+      return paddock.paddockManagerId;
+    case 2:
+      return paddock.farmId;
+    default:
+      console.log('Error: Tipo de suma no existe');
+      break;
+  }
+}
+
 /**
  * 
  * @param {Array} data - Tiene los datos en mayor detalle de la id que se quiere
@@ -220,24 +234,24 @@ function findByValue(data, val) {
  * @returns Arreglo con los nombres del tipo en orden decreciente
  */
 // FIXME: calcular valor de paddock undefined en caso de ser necesario
-function addArea(data, type = 0) {
+function addArea(data, type = 0, filteredPaddocks = paddocks) {
   let areaMap = new Map();
-  paddocks.forEach(paddock => {
-    // obtiene name desde 'padockType'
-    let obj = findById(data, type === 0 ? paddock.paddockTypeId : paddock.paddockManagerId);
+  filteredPaddocks.forEach(paddock => {
+    // obtiene name desde 'padockType', 'padockManagers' o 'farms'
+    let obj = findById(data, getIdByType(type, paddock));
     if (obj != undefined) {
-      let thisPaddock = { name: obj.name, totalArea: 0 };
+      let mapObjToArea = { name: obj.name, totalArea: 0 };
 
       // agrega al map si no se encuentra y añade área de 'paddock'
-      if (!areaMap.has(thisPaddock.name))
-        areaMap.set(thisPaddock.name, 0);
+      if (!areaMap.has(mapObjToArea.name))
+        areaMap.set(mapObjToArea.name, 0);
 
-      let actualArea = areaMap.get(thisPaddock.name) + paddock.area;
-      areaMap.set(thisPaddock.name, actualArea);
+      let actualArea = areaMap.get(mapObjToArea.name) + paddock.area;
+      areaMap.set(mapObjToArea.name, actualArea);
     } // ignora caso undefined
   });
-  // ordenar (por values), transformar a Array y mapear a sólo nombres
-  return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1]))).map(area => area[0]);
+  // ordenar por values decreciente, transformar a Array
+  return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1])));
 }
 
 function groupManagersByFarm(farmId, farmManagers) {
@@ -281,7 +295,8 @@ function listPaddockManagersByName() {
   plantadas de cada uno de ellos.
  */
 function sortPaddockTypeByTotalArea() {
-  return addArea(paddockType);
+  // mapear a sólo nombres
+  return addArea(paddockType).map(area => area[0]);
 }
 
 /* 
@@ -289,7 +304,8 @@ function sortPaddockTypeByTotalArea() {
   decrecientemente por la suma TOTAL de hectáreas que administran.
 */
 function sortFarmManagerByAdminArea() {
-  return addArea(paddockManagers, 1);
+  // mapear a sólo nombres
+  return addArea(paddockManagers, 1).map(area => area[0]);
 }
 
 /*
@@ -311,39 +327,53 @@ function farmManagerNames() {
 }
 
 /*
-5 Arreglo ordenado decrecientemente con los m2 totales de cada 
-campo que tengan más de 2 hectáreas en Paltos
+  5 Arreglo ordenado decrecientemente con los m2 totales de cada campo que 
+  tengan más de 2 hectáreas en Paltos
 */
 function biggestAvocadoFarms() {
-
+  let filteredPaddocks = paddocks.filter(item => item.paddockTypeId === 1);
+  return addArea(farms, 2, filteredPaddocks)
+    .map(item => item[1])
+    .filter(item => item > 20000);
 }
 
 /* 
-  6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA 
-  LO ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
+  6 Arreglo con nombres de los administradores de la FORESTAL Y AGRÍCOLA LO 
+  ENCINA, ordenados por nombre, que trabajen más de 1000 m2 de Cerezas
 */
 function biggestCherriesManagers() {
-  console.log(testFunction());
+
 }
 
-function testFunction() {
-  return 'hello world'
-}
-
-
-// 7 Objeto en el cual las claves sean el nombre del administrador y el valor un arreglo con los nombres de los campos que administra, ordenados alfabéticamente
+/*
+  7 Objeto en el cual las claves sean el nombre del administrador y el valor un 
+  arreglo con los nombres de los campos que administra, ordenados alfabéticamente
+*/
 function farmManagerPaddocks() {
 
 }
 
-// 8 Objeto en que las claves sean el tipo de cultivo concatenado con su año de plantación (la concatenación tiene un separador de guión ‘-’, por ejemplo AVELLANOS-2020) y el valor otro objeto en el cual la clave sea el id del administrador y el valor el nombre del administrador
+/* 
+  8 Objeto en que las claves sean el tipo de cultivo concatenado con su año de 
+  plantación (la concatenación tiene un separador de guión ‘-’, por ejemplo 
+  AVELLANOS-2020) y el valor otro objeto en el cual la clave sea el id del 
+  administrador y el valor el nombre del administrador
+*/
 function paddocksManagers() {
 
 }
 
-// 9 Agregar nuevo administrador con datos ficticios a "paddockManagers" y agregar un nuevo cuartel de tipo NOGALES con 900mts2, año 2017 de AGRICOLA SANTA ANA, administrado por este nuevo administrador
-// Luego devolver el lugar que ocupa este nuevo administrador en el ranking de la pregunta 3.
-// No modificar arreglos originales para no alterar las respuestas anteriores al correr la solución
+/* 
+  9 Agregar nuevo administrador con datos ficticios a "paddockManagers" y 
+  agregar un nuevo cuartel de tipo NOGALES con 900mts2, año 2017 de AGRICOLA 
+  SANTA ANA, administrado por este nuevo administrador
+
+  Luego devolver el lugar que ocupa este nuevo administrador en el ranking de la
+  pregunta 3.
+
+  No modificar arreglos originales para no alterar las respuestas anteriores al 
+  correr la solución
+*/
 function newManagerRanking() {
 
 }
@@ -362,8 +392,8 @@ console.log("Pregunta 4");
 console.log(farmManagerNames());
 console.log("Pregunta 5");
 console.log(biggestAvocadoFarms());
-// console.log("Pregunta 6");
-// console.log(biggestCherriesManagers());
+console.log("Pregunta 6");
+console.log(biggestCherriesManagers());
 // console.log("Pregunta 7");
 // console.log(farmManagerPaddocks());
 // console.log("Pregunta 8");
