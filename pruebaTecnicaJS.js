@@ -195,20 +195,11 @@ const farms = [
 */
 // Tip: Una hectárea equivale a 10.000m2
 
-// 0 Arreglo con los ids de los responsables de cada cuartel
-function listPaddockManagerIds() {
-  return paddockManagers.map((paddockManager) => paddockManager.id);
-}
-
-// 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
+// #region FUNCIONES PROPIAS
 // fuente: https://stackoverflow.com/questions/51165
 function sortManagersByName(managers) {
   // forzamos 'a' a ser un string para evitar excepciones
   return managers.sort((a, b) => ('' + a.name).localeCompare(b.name));
-}
-
-function listPaddockManagersByName() {
-  return sortManagersByName(paddockManagers).map(manager => manager.taxNumber);
 }
 
 function findById(data, id) {
@@ -249,6 +240,41 @@ function addArea(data, type = 0) {
   return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1]))).map(area => area[0]);
 }
 
+function groupManagersByFarm(farmId, farmManagers) {
+  paddocks.forEach(paddock => {
+    let farmManagerId = paddock.paddockManagerId;
+    let farmManager = findByValue(farmManagers, farmManagerId);
+    if (farmManager === undefined) {
+      if (farmId === paddock.farmId) {
+        farmManagers.push(farmManagerId);
+      }
+    }
+  });
+}
+
+function sortAndReplaceIds(farmManagerMap) {
+  // FIXME: no considera caso undefined
+  farmManagerMap.forEach((value, key) => {
+    let managers = [];
+    let names = [];
+    managers = value.map(farmManagerId => findById(paddockManagers, farmManagerId));
+    names = sortManagersByName(managers).map(manager => manager.name);
+    farmManagerMap.set(key, names);
+  });
+}
+
+// #endregion
+
+// 0 Arreglo con los ids de los responsables de cada cuartel
+function listPaddockManagerIds() {
+  return paddockManagers.map((paddockManager) => paddockManager.id);
+}
+
+// 1 Arreglo con los ruts de los responsables de los cuarteles, ordenados por nombre
+function listPaddockManagersByName() {
+  return sortManagersByName(paddockManagers).map(manager => manager.taxNumber);
+}
+
 /* 
   2 Arreglo con los nombres de cada tipo de cultivo, ordenados 
   decrecientemente por la suma TOTAL de la cantidad de hectáreas 
@@ -267,23 +293,10 @@ function sortFarmManagerByAdminArea() {
 }
 
 /*
-4 Objeto en que las claves sean los nombres de los campos y los 
-valores un arreglo con los ruts de sus administradores ordenados 
-alfabéticamente por nombre.
+  4 Objeto en que las claves sean los nombres de los campos y los valores un 
+  arreglo con los ruts de sus administradores ordenados alfabéticamente por 
+  nombre.
 */
-function groupManagersByFarm(farmId, farmManagers) {
-  paddocks.forEach(paddock => {
-    let farmManagerId = paddock.paddockManagerId;
-    let farmManager = findByValue(farmManagers, farmManagerId);
-    if (farmManager === undefined) {
-      if (farmId === paddock.farmId) {
-        farmManagers.push(farmManagerId);
-      }
-    }
-  });
-  
-}
-
 function farmManagerNames() {
   let farmManagerMap = new Map();
   farms.forEach(farm => {
@@ -293,19 +306,9 @@ function farmManagerNames() {
     }
     groupManagersByFarm(farm.id, farmManagers);
   });
-  // FIXME: no considera caso undefined
-  farmManagerMap.forEach((value, key) => {
-    let managers = []; 
-    let sortedManagers = [];
-    let names = [];
-    value.forEach(farmManagerId => managers.push(findById(paddockManagers, farmManagerId)));
-    sortedManagers = sortManagersByName(managers);
-    names = sortedManagers.map(manager => manager.name);
-    farmManagerMap.set(key, names);
-  });
+  sortAndReplaceIds(farmManagerMap);
   return farmManagerMap;
 }
-
 
 /*
 5 Arreglo ordenado decrecientemente con los m2 totales de cada 
@@ -357,8 +360,8 @@ console.log("Pregunta 3");
 console.log(sortFarmManagerByAdminArea());
 console.log("Pregunta 4");
 console.log(farmManagerNames());
-// console.log("Pregunta 5");
-// console.log(biggestAvocadoFarms());
+console.log("Pregunta 5");
+console.log(biggestAvocadoFarms());
 // console.log("Pregunta 6");
 // console.log(biggestCherriesManagers());
 // console.log("Pregunta 7");
