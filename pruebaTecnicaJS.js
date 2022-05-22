@@ -226,7 +226,7 @@ function addArea(data, type = 0) {
     // obtiene name desde 'padockType'
     let obj = findById(data, type === 0 ? paddock.paddockTypeId : paddock.paddockManagerId);
     if (obj != undefined) {
-      let thisPaddock = {name: obj.name, totalArea: 0};
+      let thisPaddock = { name: obj.name, totalArea: 0 };
 
       // agrega al map si no se encuentra y añade área de 'paddock'
       if (!areaMap.has(thisPaddock.name))
@@ -237,7 +237,7 @@ function addArea(data, type = 0) {
     } // ignora caso undefined
   });
   // ordenar (por values), transformar a Array y mapear a sólo nombres
-  return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1]))).map(area => area[1]);
+  return Array.from(new Map([...areaMap.entries()].sort((a, b) => b[1] - a[1]))).map(area => area[0]);
 }
 
 /* 
@@ -263,7 +263,23 @@ function sortFarmManagerByAdminArea() {
   alfabéticamente por nombre.
 */
 function farmManagerNames() {
-
+  let map = new Map();
+  farms.forEach(farm => { 
+    if (!map.has(farm.name)) {
+      map.set(farm.name, []);
+    }
+    paddocks.forEach(paddock => {
+      let farmManagerId = paddock.paddockManagerId;
+      let farmManagers = map.get(farm.name);
+      if (farm.id === paddock.farmId) {
+        let farmManager = findById(farmManagers, farmManagerId);
+        if (farmManager === undefined) {
+          farmManagers.push(farmManagerId)
+        }
+      }
+    });
+  });
+  return map;
 }
 
 /*
