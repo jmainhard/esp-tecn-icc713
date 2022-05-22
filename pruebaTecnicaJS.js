@@ -304,10 +304,8 @@ function farmManagerNames() {
     groupManagersByFarm(farm.id, farmManagers);
   });
 
-  for (let farmManagers of farmManagerMap) {
-    for (let farmManagerIds of farmManagers) {
-      console.log(farmManagerIds);
-    }
+  for (let farmManagerIds of farmManagerMap.values()) {
+    let names = farmManagerIds.map(farmManagerId => findById(paddockManagers, farmManagerId).name);
   }
 }
 
