@@ -329,7 +329,7 @@ function getManagersNames(paddocks) {
 
 function managerMap(paddock) {
   let managerObject = findById(paddockManagers, paddock.paddockManagerId);
-  return new Map([[managerObject.id, managerObject.name]]);
+  return [ managerObject.id, managerObject.name ];
 }
 
 //////////////
@@ -429,19 +429,19 @@ function farmManagerPaddocks() {
   administrador y el valor el nombre del administrador
 */
 // FIXME: no considera caso undefined
+// nota: lo había hecho con map dado que se pide estructura tipo clave, valor
+// sin embargo tomar la información implica que habrá repeticiones en las claves
+// - dos plantaciones del mismo tipo plantadas el mismo año - 
+// por lo que utilicé arreglo como estructura
 function paddocksManagers() {
-  let paddocksManagersMap = new Map();
+  let paddocksManagersMap = [];
   paddocks.forEach(paddock => {
     let paddockTypeName = findById(paddockType, paddock.paddockTypeId).name;
-    let year = paddock.harvestYear;
-    let key = paddockTypeName + '-' + year;
-    // añade sólo primera aparición
-    if (!paddocksManagersMap.has(key)) {
-      paddocksManagersMap.set(key, managerMap(paddock))
-    } else {
-      // console.log("Alerta: Se ha omitido el cultivo: " + key + ', ya se encuentra registrado');
-    }
+    let paddockManagerKey = paddockTypeName + '-' + paddock.harvestYear;
+    let paddockManagerValue = managerMap(paddock);
+    paddocksManagersMap.push([paddockManagerKey, paddockManagerValue]);
   });
+  console.log(paddocksManagersMap.length);
   return paddocksManagersMap;
 }
 
@@ -456,11 +456,9 @@ function paddocksManagers() {
   No modificar arreglos originales para no alterar las respuestas anteriores al 
   correr la solución
 */
-// aquí intente modificar traspasar los arrays a nuevas variables
+// aquí intente traspasar los arrays a nuevas variables
 // pero seguia modificando los const originales asi que los cambié de lugar
-// para modificarlos antes de la pregunta 9 sólo
-
-
+// para modificarlos para la pregunta 9 sólo
 function newManagerRanking() {
   // modifiqué los originales pero en este punto para no complicarme mucho
   paddockManagers.push({ id: 7, taxNumber: '34810582', name: 'PEDRO' });
