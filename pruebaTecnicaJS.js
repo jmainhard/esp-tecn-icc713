@@ -441,7 +441,6 @@ function paddocksManagers() {
     let paddockManagerValue = managerMap(paddock);
     paddocksManagersMap.push([paddockManagerKey, paddockManagerValue]);
   });
-  console.log(paddocksManagersMap.length);
   return paddocksManagersMap;
 }
 
