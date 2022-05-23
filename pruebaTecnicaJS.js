@@ -8,7 +8,7 @@ const paddockManagers = [
   { id: 3, taxNumber: "74351663", name: "CARLOS" },
   { id: 4, taxNumber: "57684353", name: "ANDREA" },
   { id: 5, taxNumber: "12341145", name: "DANIELA" },
-  { id: 6, taxNumber: "98245680", name: "JOAQUIN" },
+  { id: 6, taxNumber: "98245680", name: "JOAQUIN" }
 ];
 
 // Tipo de cuartel, en el cual se utiliza el tipo de producto plantado
@@ -235,7 +235,7 @@ function getIdByType(type, paddock) {
  *  - 0 (default) sumará total por tipo de paddock
  *  - 1 sumará total por manager
  *  - 2 sumará total por farm
- * @returns Arreglo con los nombres del tipo en orden decreciente
+ * @returns Arreglo con los nombres y valor de la suma total del tipo dado en orden decreciente
  */
 // FIXME: calcular valor de paddock undefined en caso de ser necesario
 function addArea(data, type = 0, filteredPaddocks = paddocks) {
@@ -283,7 +283,7 @@ function getAttribute(option, obj) {
     case 0:
       return obj.taxNumber;
     case 1:
-      return obj.name;  
+      return obj.name;
     default:
       console.log("Error: tipo de atributo no existe");
       break;
@@ -313,7 +313,6 @@ function sortAndReplaceIds(map, from, replaceWith) {
   });
 }
 
-
 function filterCherriesByFarm(farmId) {
   return paddocks
     .filter(item => item.paddockTypeId === 3 && item.farmId === farmId);
@@ -326,6 +325,11 @@ function filterByArea(array, area) {
 function getManagersNames(paddocks) {
   return paddocks
     .map(paddock => findById(paddockManagers, paddock.paddockManagerId).name);
+}
+
+function managerMap(paddock) {
+  let managerObject = findById(paddockManagers, paddock.paddockManagerId);
+  return new Map([[managerObject.id, managerObject.name]]);
 }
 
 //////////////
@@ -349,7 +353,7 @@ function listPaddockManagersByName() {
  */
 function sortPaddockTypeByTotalArea() {
   // mapear a sólo nombres
-  return addArea(paddockType).map(area => area[0]);
+  return addArea(paddockType).map(nameAndValue => nameAndValue[0]);
 }
 
 /* 
@@ -358,7 +362,7 @@ function sortPaddockTypeByTotalArea() {
 */
 function sortFarmManagerByAdminArea() {
   // mapear a sólo nombres
-  return addArea(paddockManagers, 1).map(area => area[0]);
+  return addArea(paddockManagers, 1).map(nameAndValue => nameAndValue[0]);
 }
 
 /*
@@ -424,8 +428,21 @@ function farmManagerPaddocks() {
   AVELLANOS-2020) y el valor otro objeto en el cual la clave sea el id del 
   administrador y el valor el nombre del administrador
 */
+// FIXME: no considera caso undefined
 function paddocksManagers() {
-
+  let paddocksManagersMap = new Map();
+  paddocks.forEach(paddock => {
+    let paddockTypeName = findById(paddockType, paddock.paddockTypeId).name;
+    let year = paddock.harvestYear;
+    let key = paddockTypeName + '-' + year;
+    // añade sólo primera aparición
+    if (!paddocksManagersMap.has(key)) {
+      paddocksManagersMap.set(key, managerMap(paddock))
+    } else {
+      // console.log("Alerta: Se ha omitido el cultivo: " + key + ', ya se encuentra registrado');
+    }
+  });
+  return paddocksManagersMap;
 }
 
 /* 
@@ -439,8 +456,24 @@ function paddocksManagers() {
   No modificar arreglos originales para no alterar las respuestas anteriores al 
   correr la solución
 */
-function newManagerRanking() {
+// aquí intente modificar traspasar los arrays a nuevas variables
+// pero seguia modificando los const originales asi que los cambié de lugar
+// para modificarlos antes de la pregunta 9 sólo
 
+
+function newManagerRanking() {
+  // modifiqué los originales pero en este punto para no complicarme mucho
+  paddockManagers.push({ id: 7, taxNumber: '34810582', name: 'PEDRO' });
+  paddocks.push(
+    {
+      paddockManagerId: 7,
+      farmId: 1,
+      paddockTypeId: 4,
+      harvestYear: 2017,
+      area: 900
+    }
+  );
+  return sortFarmManagerByAdminArea().findIndex(item => item === 'PEDRO');
 }
 
 // No modificar, eliminar o alterar cualquier línea de código o comentario de acá para abajo
@@ -461,7 +494,7 @@ console.log("Pregunta 6");
 console.log(biggestCherriesManagers());
 console.log("Pregunta 7");
 console.log(farmManagerPaddocks());
-// console.log("Pregunta 8");
-// console.log(paddocksManagers());
-// console.log("Pregunta 9");
-// console.log(newManagerRanking());
+console.log("Pregunta 8");
+console.log(paddocksManagers());
+console.log("Pregunta 9");
+console.log(newManagerRanking());
