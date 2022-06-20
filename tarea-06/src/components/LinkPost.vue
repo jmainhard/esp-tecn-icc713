@@ -4,7 +4,7 @@
         <a class="post-anchor" href="#">
             <div class="row border rounded post ">
 
-                <!-- TODO: hacer este div clickable @click para actualizar estado de upvoted -->
+                <!-- TODO: hacer este div clickeable @click para actualizar estado de upvoted -->
                 <div class="col-1">
                     <div v-if="data.upvoted">
                         <UpvotedIcon></UpvotedIcon>
