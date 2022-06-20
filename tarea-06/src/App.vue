@@ -15,6 +15,7 @@
         <LinkPost v-for="post in posts" :key="post.id" :data="post.data"></LinkPost>
       </div>
 
+      <!-- TODO: hacer estos elementos componentes (About y Archive) -->
       <div class="col-md-4">
         <div class="position-sticky pt-4" style="top: 10rem;">
           <div class="p-4 mb-3 bg-light rounded">
@@ -143,7 +144,6 @@ export default {
         newPost.data.author = 'Anónimo';
       }
       newPost.id = this.posts[this.posts.length - 1].id + 1;
-      console.log(newPost);
       this.posts.push(newPost);
     }
   }
@@ -151,12 +151,4 @@ export default {
 </script>
 
 <style>
-/* #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-} */
 </style>
