@@ -5,19 +5,6 @@
       <TodoList></TodoList>
     </div>
   </div>
-
-  <!-- Tareas completadas -->
-  <!-- <div class="collapse">
-    <input type="checkbox" />
-    <div class="collapse-title text-xl font-medium">
-      Tareas completadas
-    </div>
-    <div class="collapse-content">
-
-    </div>
-
-  </div> -->
-
 </template>
 
 <script setup>

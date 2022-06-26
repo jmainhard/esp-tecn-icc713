@@ -1,23 +1,73 @@
 
 
-<!-- FIXME: hacer que btn-prmary abarque botones arrow-up  y close-circle(con mismo background-color antes del hover) -->
+<!-- FIXME: separar en dos componentes lista de completados/lista todo o jugar con props en un sólo componente -->
 <template>
-<!-- <div class="overflow-x-auto">
-  <table class="table w-full">
-    <tbody>
+  <div class="flex-col">
+    <div class="overflow-x-auto">
+      <table class="table w-full">
+        <tbody>
+          <div v-for="todo in todoList" :key="todo.id">
+            <div v-if="!todo.completed">
+              <div class="group">
+                <tr class="hover">
+                  <td>
+                    <span>{{ todo.item.toUpperCase() }}</span>
+                  </td>
+                  <td>
+                    <div class="btn-group">
+                      <button class="btn btn-accent group-hover:block hidden" @click.stop="toggleCompleted(todo.id)">
+                        <CheckBoldIcon></CheckBoldIcon>
+                      </button>
+                      <button class="btn btn-secondary group-hover:block hidden" @click="deleteTodo(todo.id)">
+                        <CloseCircleIcon></CloseCircleIcon>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </div>
+            </div>
+          </div>
+        </tbody>
+      </table>
 
-    </tbody>
-  </table>
-</div> -->
-<div v-for="todo in todoList" :key="todo.id">
-  <div>
-    <span :class="{ completed: todo.completed }">{{ todo.item }}</span>
-    <div>
-      <span @click.stop="toggleCompleted(todo.id)">&#10004;</span>
-      <span @click="deleteTodo(todo.id)">&#10060;</span>
+    </div>
+    <div class="collapse">
+      <input type="checkbox" />
+      <div class="collapse-title text-xl font-medium">
+        Tareas completadas ({{ completedCount() }})
+      </div>
+      <div class="collapse-content">
+        <table class="table w-full">
+          <tbody>
+            <div v-for="todo in todoList" :key="todo.id">
+              <div v-if="todo.completed">
+                <div class="group">
+                  <tr class="hover">
+                    <td>
+                      <span :class="{ completed: todo.completed }">{{ todo.item.toUpperCase() }}</span>
+                    </td>
+                    <td>
+                      <div class="btn-group">
+                        <button class="btn btn-accent group-hover:block hidden" @click.stop="toggleCompleted(todo.id)">
+                          <ArrowUpIcon></ArrowUpIcon>
+                        </button>
+                        <button class="btn btn-secondary group-hover:block hidden" @click="deleteTodo(todo.id)">
+                          <CloseCircleIcon></CloseCircleIcon>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </div>
+              </div>
+            </div>
+          </tbody>
+        </table>
+      </div>
+
+
     </div>
   </div>
-</div>
+
 </template>
 
 <script setup>
@@ -26,7 +76,7 @@ import { storeToRefs } from 'pinia';
 
 import CloseCircleIcon from 'vue-material-design-icons/CloseCircle.vue'
 import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue'
-import CheckBold from 'vue-material-design-icons/CheckBold.vue'
+import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
 
 const store = useTodoListStore();
 
@@ -34,13 +84,13 @@ const store = useTodoListStore();
 const { todoList } = storeToRefs(store);
 const { toggleCompleted, deleteTodo } = store;
 
+function completedCount() {
+  return this.todoList.filter(todo => todo.completed).length;
+}
+
 </script>
 
 <style>
-span {
-  margin: 0 10px;
-  cursor: pointer;
-}
 .completed {
   text-decoration: line-through;
 }
