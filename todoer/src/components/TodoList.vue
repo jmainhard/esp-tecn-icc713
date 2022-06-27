@@ -18,6 +18,7 @@
                     <div class="btn-group">
                       <button class="btn btn-accent group-hover:block hidden" @click.stop="toggleCompleted(todo.id)">
                         <CheckBoldIcon></CheckBoldIcon>
+                      <!-- aqui deberia ir modal: https://daisyui.com/components/modal/ -->
                       </button>
                       <button class="btn btn-secondary group-hover:block hidden" @click="deleteTodo(todo.id)">
                         <CloseCircleIcon></CloseCircleIcon>
@@ -51,7 +52,7 @@
                     </td>
                     <td>
                       <div class="btn-group">
-                        <button class="btn btn-accent group-hover:block hidden" @click.stop="toggleCompleted(todo.id)">
+                        <button class="btn btn-outline btn-accent group-hover:block hidden" @click.stop="toggleCompleted(todo.id)">
                           <ArrowUpIcon></ArrowUpIcon>
                         </button>
                         <button class="btn btn-secondary group-hover:block hidden" @click="deleteTodo(todo.id)">
