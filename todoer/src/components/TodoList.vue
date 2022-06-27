@@ -1,6 +1,7 @@
 
 
-<!-- FIXME: separar en dos componentes lista de completados/lista todo o jugar con props en un sólo componente -->
+<!-- FIXME: separar en dos componentes lista de completados/lista todo o jugar con props en un sólo componente, esto está horrible -->
+<!-- Nota: no pude hacer modal, preferí dejarlo así, hacerlo en un componente a parte sería mejor -->
 <template>
   <div class="flex-col">
     <div class="overflow-x-auto">
@@ -33,7 +34,9 @@
     </div>
     <div class="collapse">
       <input type="checkbox" />
-      <div class="collapse-title text-xl font-medium">
+      <!-- TODO: agregar cambios de estado al ícono -->
+      <div class="flex collapse-title text-xl font-medium">
+        <ChevronDownIcon></ChevronDownIcon>
         Tareas completadas ({{ completedCount() }})
       </div>
       <div class="collapse-content">
@@ -77,6 +80,7 @@ import { storeToRefs } from 'pinia';
 import CloseCircleIcon from 'vue-material-design-icons/CloseCircle.vue'
 import ArrowUpIcon from 'vue-material-design-icons/ArrowUp.vue'
 import CheckBoldIcon from 'vue-material-design-icons/CheckBold.vue'
+import ChevronDownIcon from 'vue-material-design-icons/ChevronDown.vue'
 
 const store = useTodoListStore();
 

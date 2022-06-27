@@ -1,4 +1,9 @@
 <template>
+
+  <div class="navbar bg-primary">
+    <a class="btn btn-ghost normal-case text-xl">ToDoer</a>
+  </div>
+
   <div class="flex justify-center">
     <div class="flex-col">
       <TodoForm></TodoForm>
